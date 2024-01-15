@@ -4124,7 +4124,8 @@ define(function () { 'use strict';
     // https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest#withCredentials
     var USE_XHR = (window$1.XMLHttpRequest && 'withCredentials' in new XMLHttpRequest());
     var USE_FETCH = !_.isUndefined(fetch) && typeof(fetch) === 'function'
-
+    console.log('USE_XHR: ', USE_XHR);
+    console.log('USE_FETCH: ', USE_FETCH);
     // IE<10 does not support cross-origin XHR's but script tags
     // with defer won't block window.onload; ENQUEUE_REQUESTS
     // should only be true for Opera<12
@@ -4632,17 +4633,18 @@ define(function () { 'use strict';
                 succeeded = false;
             }
         }else if (USE_FETCH) {
+            console.log('attempting fetch');
             try {
-                var headers = this.get_config('xhr_headers');
+                var xhr_headers = this.get_config('xhr_headers');
                 if (use_post) {
-                    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    xhr_headers['Content-Type'] = 'application/x-www-form-urlencoded';
                 }
 
                 var fetchOpts = {
                     method: options.method,
                     mode: 'cors',
                     credentials: 'include',
-                    headers: headers,
+                    headers: xhr_headers,
                     body: body_data
                 };
 
@@ -4693,6 +4695,7 @@ define(function () { 'use strict';
                         }
                     });
             } catch (e) {
+                console.log('fetch error:'+ e);
                 lib.report_error(e);
                 succeeded = false;
             }

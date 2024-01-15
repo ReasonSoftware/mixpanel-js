@@ -739,7 +739,8 @@ var NOOP_FUNC = function NOOP_FUNC() {};
 // https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest#withCredentials
 var USE_XHR = _utils.window.XMLHttpRequest && 'withCredentials' in new XMLHttpRequest();
 var USE_FETCH = !_utils._.isUndefined(fetch) && typeof fetch === 'function';
-
+_utils.console.log('USE_XHR: ', USE_XHR);
+_utils.console.log('USE_FETCH: ', USE_FETCH);
 // IE<10 does not support cross-origin XHR's but script tags
 // with defer won't block window.onload; ENQUEUE_REQUESTS
 // should only be true for Opera<12
@@ -1251,17 +1252,18 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
             succeeded = false;
         }
     } else if (USE_FETCH) {
+        _utils.console.log('attempting fetch');
         try {
-            var headers = this.get_config('xhr_headers');
+            var xhr_headers = this.get_config('xhr_headers');
             if (use_post) {
-                headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                xhr_headers['Content-Type'] = 'application/x-www-form-urlencoded';
             }
 
             var fetchOpts = {
                 method: options.method,
                 mode: 'cors',
                 credentials: 'include',
-                headers: headers,
+                headers: xhr_headers,
                 body: body_data
             };
 
@@ -1310,6 +1312,7 @@ MixpanelLib.prototype._send_request = function (url, data, options, callback) {
                 }
             });
         } catch (e) {
+            _utils.console.log('fetch error:' + e);
             lib.report_error(e);
             succeeded = false;
         }
